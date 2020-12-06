@@ -1,0 +1,88 @@
+
+<!-- 
+    1. Creating and rendering the User Form
+        - First name and email have the HTML5 requried tag because they are required, but not country.
+        - the id property in each input/select is used by the label to match to its attribute. When a user clicks on the label, the input or select receives the focus. 
+    2. Using ngModel to easily create two way binding between the form and the User Model. 
+        - assigning the name attribute to firstName. Name attribute is required in Angular Froms to register the control with the form.
+    3.Creating a for loop to loop through the countries (defined in User-form component) and save the value to the variable c and rendering the value.
+    4. Added the #firstName variable and gave it the value of ngModel to create a reference to the firstName input control so that we can access its css classes (ng-dirty, pristine, valid,invalid).
+        - Showing "First Name is required" if firstName.touched is true and fistName.valid is false.
+        - We check the class "touched" to prevent showing errors before the user has had a chance to edit the value. Example: Errors wont show when the page is freshly loaded when touched is checked. 
+        - The outer div in First Name reveals 2 nested message divs if the control is touched and there are firstname errors.
+            - inside the outer divs are two nested divs which presents a custom message for "required" and "minlength" validation error.   
+    5. Adding the directive ngSubmit and binding it to the UserForm Comp.submit() method with an event binding.
+    6. Defined #userForm and assigned the value of ngForm to make userForm a reference to the form as a whole. 
+        - ngForm directive allows userForm to hold control to its contained elements with the ngModel directive and name attribute. userForm thus enable us to monitor these container control elements properties including their validity. 
+        - userForm also has its own valid property which is true only if every container control is valid. This enables us to bind the "Submit" buttons disableed property to the forms over-alll validity via the #userForm variable. 
+            - The Submit button remains disabled until all required inputs are filled up correctly. 
+    7. When the Submit nutton is clicked the values entered will be displayed with interoplation bindings. 
+        - The values only appear while the component is in the submitted state. 
+        - Added a Remove button, the click event sets the submitted to false which removes the values.  
+-->
+
+<div class="container">
+    <h1> User Form</h1>
+    <form (ngSubmit)="onSubmit()" #userForm='ngForm'>
+        <div class="form-group">
+            <label for="firstName"> First Name </label>
+            <input type="text" class="form-control" id="firstName" required
+                [(ngModel)]="model.firstName" 
+                name="firstname"
+                #firstName="ngModel"
+                minlength="3">
+                <div *ngIf="firstName.touched && firstName.errors">
+                    <div class="alert alert-danger"
+                    *ngIf="firstName.errors.required">
+                        First Name is required!
+                    </div>
+                    <div class="alert alert-danger"
+                        fistName.errors.minlength>
+                            First name should minimum 3 characters.
+                    </div>
+                </div>
+                
+        </div>
+        <div class="form-group">
+            <label for="email"> Email </label>
+            <input type="text" class="form-control" id="email" required
+                [(ngModel)]="model.email" 
+                name="email"
+                #email="ngModel"
+                minlength="3">
+                <div *ngIf="email.touched && email.errors">
+                    <div class="alert alert-danger" *ngIf="email.errors.required">
+                        Email is required!
+                    </div>
+                    <div class="alert alert-danger"
+                    *ngIf="email.errors.minlength">
+                    Email should be minimum 3 characters.
+                    </div>
+                </div>
+                
+        </div>
+        <div class="form-group">
+            <label for="country"> Country </label>
+            <select class="form-control" id="country"
+                [(ngModel)]="model.country" name="country">
+                <option *ngFor="let c of countries" [value]="c">
+                    {{c}}
+                </option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary"
+            [disabled]="!userForm.form.valid"> Submit </button>
+    </form>
+</div>
+
+<div [hidden]="!submitted">
+    You submitted the following: 
+    First name: {{model.firstName}}
+    <br>
+    email: {{model.email}}
+    <br>
+    Country: {{model.country}}
+    <br>
+    <button class="btn btn-danger"
+        (click)="submitted=false"> Remove </button>
+</div>
